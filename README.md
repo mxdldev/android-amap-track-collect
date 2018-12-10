@@ -30,7 +30,7 @@ android系统自带的一个小型的关系型数据库<p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;在长期的开发实践中证明后台服务进程在某些机型，也有被杀死的可能，需要我们进一步需要进程优先级，怎么办，真正的“黑科技”来了，通过android系统提供的账号同步机制SyncAdapter来实现进程的优先级，SysnAdapter服务工作在独立的进程，由操作系统调度，进程属于系统核心级别，系统不会被杀掉，而使用SyncAdapter的进程优先级本身也会提供，服务关联SyncAdapter后，进程的优先级变为1，仅仅低于前台正在运行的进程，因此大大降低了被系统杀掉的概率。
 
 ## 5.工作流程
-有了以上的分析，现在不妨画个流程图，以便加深理解
+有了以上的分析，现在不妨画个流程图，以便加深理解<br>
 ![工作流程图](https://github.com/geduo83/TrackDataCollect/blob/master/app/src/main/assets/collectdata_activity.png)
 ## 6.类关系图
 ![类关系图](https://github.com/geduo83/TrackDataCollect/blob/master/app/src/main/assets/collectdata_class.png)
