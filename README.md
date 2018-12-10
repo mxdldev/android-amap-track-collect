@@ -12,33 +12,33 @@
 <br>![效果图](https://github.com/geduo83/TrackDataCollect/blob/master/app/src/main/assets/demo_map.jpg)
 ## 2.数据源的选择
 &nbsp;&nbsp;&nbsp;&nbsp;数据采集可采用Android系统原生的定位服务，也可以使用第三方的定位服务比如高德定位，百度定位等，根据多年来的开发经验，还是高德好用些，曾经做导航的时候，就发现百度导航会出现主路辅路不分的情况，前阵子还曝光了百度地图盗用高德地图的采集数据的丑闻，高德毕竟页是专业做地图出身的，而且现在都是免费的 ，高德定位的优势请参见：https://lbs.amap.com/faq/android/android-location/15
-## 2.数据持久化
+## 3.数据持久化
 &nbsp;&nbsp;&nbsp;&nbsp;解决了数据源问题，接下来就问题就是，数据往哪里存的问题，在android系统中实现数据持久化通常有一下几个解决方案，
-* 2.1 SharedPreferences<p>
+* 3.1 SharedPreferences<p>
 适用与存储一些app的配置信息，例如缓存用户登录的用户名，密码等信息，版本信息等小量信息
-* 2.2. ContentProvider<p>
+* 3.2. ContentProvider<p>
 它为不同的应用程序之间数据访问提供了统一的访问接口，例如通讯录数据，相册数据，这些数据在第三方app中经常会用到
-* 2.3  File<p>
+* 3.3  File<p>
 通过IO流，把数据存储于文件，文件内容可以是xml形式，也可以是json形式
-* 2.4 SQLiteDatabase<p>
+* 3.4 SQLiteDatabase<p>
 android系统自带的一个小型的关系型数据库<p>
 &nbsp;&nbsp;&nbsp;&nbsp;很显然SharedPreferences、ContentProvider不在考虑范围，由于数据采集是一个持续时间长，频率高的操作，对于频繁对文件进行读写操作是非常消耗系统资源的，对于采集的多个文件也不好管理，如果删除某个点的数据，在整个文件中进行检索将是非常痛苦的，最要命的是，File文件只能存储在机身存储的外部存储，这个区域是一个共享区域，如果用户手贱，私自删除数据也是有可能的
 <br>&nbsp;&nbsp;&nbsp;&nbsp;毋庸置疑使用SQLiteDatabase存储将是您最佳的选择
 
-## 3.数据怎么存
+## 4.数据怎么存
 &nbsp;&nbsp;&nbsp;&nbsp;解决了数据源和数据存到哪的问题，接下来就是怎么存的问题，数据采集操作一个持久操作，不能阻塞UI主线程，那就需要启动一个子线程了，直接让DB里面存，合适吗？采集一个往DB里面存储一个，如果按照1秒采集一次的速度来计算的话，那就就一分钟向数据库有60次的读写操作，要知道，在Android的世界里，所有的IO操作都是耗时的操作，怎么办，很简单，先把采集到数据缓存到内存中，缓存到一定程度，一次性全部取出来一把存入库中，问题不就解决了，按照20秒取一次的速度来取的话，一分钟只要存储三次就行了，一分钟就减少了57次对数据库的操作，大大的提升了数据采集的性能问题，分析到了这里，我们也就不难下结论了，毫不含糊先开启一个子线程来采集数据并将数据存入到内存，再开启一个定期任务的子线程负责从内存中取数据，并将数据存入数据库，有一点需要注意下，内存的数据结构我们用ArrayList实为不妥，多线程中有数据同步的问题，所以就只能Vector了，说道这里我们不难发现，这数据采集实现的过程其实就是我们常说的生产者与消费者的问题了
-## 4. 提高进程优先级
+## 5.提高进程优先级
 &nbsp;&nbsp;&nbsp;&nbsp;数据采集是持久的操作，如果程序进入后台，过一段时间就很有可能被系统杀死，我们知道android系统的的进程，按照进程的优先级可划分为：前台进程、可见进程间、服务进程、后台进程、空进程，很显然我们需要启动一个Service服务来对数据进行采集和存储的操作，这样如果程序进入了后台，我们将一个后台进程提升为了服务进程，提升了系统的优先级，服务进程被系统杀死的概率将会大大降低。
 <p>&nbsp;&nbsp;&nbsp;&nbsp;在长期的开发实践中证明后台服务进程在某些机型，也有被杀死的可能，需要我们进一步需要进程优先级，怎么办，真正的“黑科技”来了，通过android系统提供的账号同步机制SyncAdapter来实现进程的优先级，SysnAdapter服务工作在独立的进程，由操作系统调度，进程属于系统核心级别，系统不会被杀掉，而使用SyncAdapter的进程优先级本身也会提供，服务关联SyncAdapter后，进程的优先级变为1，仅仅低于前台正在运行的进程，因此大大降低了被系统杀掉的概率。
 
-## 5.工作流程
+## 6.工作流程
 有了以上的分析，现在不妨画个流程图，以便加深理解<br>
 ![工作流程图](https://github.com/geduo83/TrackDataCollect/blob/master/app/src/main/assets/collectdata_activity.png)
-## 6.类关系图
+## 7.类关系图
 ![类关系图](https://github.com/geduo83/TrackDataCollect/blob/master/app/src/main/assets/collectdata_class.png)
-## 7.代码实现
+## 8.代码实现
 画好UML类图后，再去看源码，再也不怕迷路了
-* 7.1 启动服务
+* 8.1 启动服务
 ```
  //MainActivity：启动轨迹信息收集服务
   private void startTrackCollectService() {
@@ -57,7 +57,7 @@ android系统自带的一个小型的关系型数据库<p>
     }, Context.BIND_AUTO_CREATE);
   }
 ```
-* 7.2 开始采集
+* 8.2 开始采集
 ```
   //TripTrackCollection：开始采集数据
  @Override
@@ -153,7 +153,7 @@ android系统自带的一个小型的关系型数据库<p>
   }
 
 ```
-* 7.3 停止采集
+* 8.3 停止采集
 ```
  //停止采集
   @Override
@@ -186,7 +186,7 @@ android系统自带的一个小型的关系型数据库<p>
     TripDBHelper.getInstance(mContext).addTrack(trackid, trackid, stringBuffer.toString());
   }
 ```
-* 7.4 轨迹展示
+* 8.4 轨迹展示
 ```
 //MainActivity：轨迹展示
   private void showTrack(List<LatLng> list) {
