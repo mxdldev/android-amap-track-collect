@@ -9,7 +9,7 @@ import com.geduo.datacollect.collect.TripTrackCollection;
 import com.geduo.datacollect.contract.ITripTrackCollection;
 
 /**
- * Description: <><br>
+ * Description: <TrackCollectService><br>
  * Author:      gxl<br>
  * Date:        2018/12/7<br>
  * Version:     V1.0.0<br>
