@@ -1,0 +1,12 @@
+@startuml
+(*)  --> "AMapLocationClient：AMapLocationListener"
+--> "AMapLocation：LocationInfo"
+--> "ProductThread：mVectorThread"
+-->Memory
+--> "CustomerThread：mDatabaseThread"
+-->Memory
+--> "CustomerThread：mDatabaseThread"
+-->SQLiteDataBase
+-->Server
+-->(*)
+@enduml

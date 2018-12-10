@@ -1,0 +1,28 @@
+@startuml
+class Track
+class Media
+class Trip{
+   String tripID;
+   String tracks;
+   String medias;
+}
+Trip --> Track
+Trip --> Media
+
+interface ITripTrackCollection{
+    void start();
+    void stop();
+    void pause();
+    void destory();
+}
+class TripTrackCollection implements ITripTrackCollection{
+    Vector<LocationInfo> mLocations;
+    ExtcutorService mVecoterThread;
+    ScheduledExecutorService mDatabaseThread;
+}
+
+class TrackCollectService extends Service implements ITripTrackCollection{
+    TripTrackCollection TripTrackCollection;
+}
+TrackCollectService -->TripTrackCollection
+@enduml
