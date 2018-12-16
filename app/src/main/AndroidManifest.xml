@@ -18,17 +18,28 @@
     <!--用于写入缓存数据到扩展存储卡-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <!--用于申请调用A-GPS模块-->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
+    <uses-permission
+        android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
     <!--用于申请获取蓝牙信息进行室内定位-->
     <uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
+
+    <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+    <!-- Required to enable our SyncAdapter after it's created. -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <!-- Required because we're manually creating a new account. -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MyApplication"
+    >
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -41,9 +52,36 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="1a42fcddb1e15fc59d03d32268f7bb3a"/>
-       <!-- <meta-data
+            android:value="84b69b8cc0033c65289fcdd4f309790b"/>
+        <!--meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="0164e5b4c219410b34de42ec66682cf9"/>-->
+            android:value="1a42fcddb1e15fc59d03d32268f7bb3a"/-->
+
+        <!-- <meta-data
+             android:name="com.amap.api.v2.apikey"
+             android:value="0164e5b4c219410b34de42ec66682cf9"/>-->
+        <provider android:name=".provider.SyncContentProvider"
+                  android:authorities="@string/account_auth_provider"
+                  android:exported="false"
+                  android:syncable="true"
+        />
+        <service android:name=".service.SyncAdapterService"
+                 android:exported="true"
+                 android:process=":core">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/syncadapter"/>
+            />
+        </service>
+        <service android:name=".service.SyncAccountService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                       android:resource="@xml/authenticator" />
+        </service>
+        />
     </application>
 </manifest>

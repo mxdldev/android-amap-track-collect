@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TrackDataCollect</string>
+    <string name="account_auth_provider">com.geduo.datacollect</string>
+    <string name="account_auth_type">com.geduo.datacollect.account</string>
 </resources>
