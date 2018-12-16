@@ -35,7 +35,7 @@ import android.util.Log;
  */
 public class SyncAccountService extends Service {
     private static final String TAG = "SyncAccountService";
-    public static final String ACCOUNT_NAME = "Account";
+    public static final String ACCOUNT_NAME = "DataCollectAccount";
     private Authenticator mAuthenticator;
 
     public static Account getAccount(String accountType) {
