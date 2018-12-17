@@ -74,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
-		SyncControl.createSyncAccount(MainActivity.this);
+		//锁屏之后，过补了半个小时同步服务就挂了,不靠谱
+		//SyncControl.createSyncAccount(MainActivity.this);
 
 	}
 
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 				if (mBuilder != null && mMap != null) {
 					LatLng northeast = mBuilder.build().northeast;
 					if (northeast != null && northeast.equals(mBuilder.build().southwest)) {
-						cameraUpdate = CameraUpdateFactory.newLatLng(mBuilder.build().southwest);
+						cameraUpdate = CameraUpdateFactory.newLatLngZoom(mBuilder.build().southwest,17);
 					} else {
 						cameraUpdate = CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 20);
 					}
@@ -195,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
 		String trackid = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		List<LatLng> track = TripDBHelper.getInstance(this).getTrack(trackid);
 		showTrack(track);
-		SyncControl.triggerRefresh();
 	}
 
 }

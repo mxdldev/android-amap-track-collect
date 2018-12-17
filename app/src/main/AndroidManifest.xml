@@ -50,21 +50,6 @@
         <service android:name="com.amap.api.location.APSService"/>
         <service android:name=".service.TrackCollectService"/>
 
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="84b69b8cc0033c65289fcdd4f309790b"/>
-        <!--
-            meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="1a42fcddb1e15fc59d03d32268f7bb3a"/
-        -->
-
-
-        <!--
-             <meta-data
-             android:name="com.amap.api.v2.apikey"
-             android:value="0164e5b4c219410b34de42ec66682cf9"/>
-        -->
         <provider
             android:name=".provider.SyncContentProvider"
             android:authorities="@string/account_auth_provider"
@@ -93,9 +78,11 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>
         </service>
-        />
-        <activity android:name=".MainActivity">
-        </activity>
+
+        <activity android:name=".MainActivity" android:launchMode="singleTask"/>
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="b329d32441792efc75636bc43bad8b71"/>
     </application>
 
 </manifest>
