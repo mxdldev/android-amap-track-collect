@@ -46,6 +46,7 @@ public class TrackCollectService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mTrackCollection.destory();
+        stopForeground(true);
     }
 
     class DataBinder extends Binder implements ITripTrackCollection {
