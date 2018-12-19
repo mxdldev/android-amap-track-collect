@@ -1,17 +1,12 @@
-package com.geduo.datacollect.provider;
+package com.geduo.datacollect.alive.sync.provider;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.geduo.datacollect.util.SyncControl;
+import com.geduo.datacollect.alive.sync.util.SyncControl;
 
 /**
  * Description: <SyncContentProvider><br>

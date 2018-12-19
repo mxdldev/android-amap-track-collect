@@ -1,0 +1,40 @@
+调用：
+mScreenListener = new ScreenReceiverUtil(this);
+		mScreenListener.setScreenReceiverListener( new ScreenReceiverUtil.SreenStateListener() {
+			@Override
+			public void onSreenOn() {
+				ScreenManager.getScreenManagerInstance(MainActivity.this).finishActivity();
+			}
+
+
+			@Override
+			public void onSreenOff() {
+				ScreenManager.getScreenManagerInstance(MainActivity.this).startActivity();
+			}
+
+
+			@Override
+			public void onUserPresent() {
+				// 解锁，暂不用，保留
+			}
+		});
+======================================================
+     <activity android:name=".alive.onepx.SinglePixelActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+                  android:excludeFromRecents="true"
+                  android:finishOnTaskLaunch="false"
+                  android:launchMode="singleInstance"
+                  android:theme="@style/SingleActivityStyle"/>
+=======================================================
+ <!--1像素Activity风格 @android:color/transparent-->
+    <style name="SingleActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowNoDisplay">false</item>
+    </style>

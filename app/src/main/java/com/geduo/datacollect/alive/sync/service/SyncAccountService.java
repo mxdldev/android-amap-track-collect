@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.geduo.datacollect.service;
+package com.geduo.datacollect.alive.sync.service;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

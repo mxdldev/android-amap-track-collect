@@ -1,4 +1,4 @@
-package com.geduo.datacollect.service;
+package com.geduo.datacollect.alive.sync.service;
 
 import android.accounts.Account;
 import android.app.Service;

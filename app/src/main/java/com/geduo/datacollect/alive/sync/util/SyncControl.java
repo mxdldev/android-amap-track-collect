@@ -1,4 +1,4 @@
-package com.geduo.datacollect.util;
+package com.geduo.datacollect.alive.sync.util;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
@@ -8,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.geduo.datacollect.service.SyncAccountService;
+import com.geduo.datacollect.alive.sync.service.SyncAccountService;
 
 public class SyncControl {
 	public static final long SYNC_FREQUENCY = 5; // 1 hour (in seconds)

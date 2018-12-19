@@ -1,18 +1,20 @@
 package com.geduo.datacollect.service;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 
 import com.geduo.datacollect.MainActivity;
 import com.geduo.datacollect.R;
 import com.geduo.datacollect.collect.TripTrackCollection;
 import com.geduo.datacollect.contract.ITripTrackCollection;
+import com.geduo.datacollect.onepx.ScreenReceiver;
 
 /**
  * Description: <TrackCollectService><br>
@@ -24,7 +26,8 @@ import com.geduo.datacollect.contract.ITripTrackCollection;
 public class TrackCollectService extends Service {
     private TripTrackCollection mTrackCollection;
     private boolean isstarting = false;
-
+    private BroadcastReceiver mReceiver;
+    private static int ROGUE_ID = 1;
     @Override
     public IBinder onBind(Intent intent) {
         return new DataBinder();
@@ -34,19 +37,39 @@ public class TrackCollectService extends Service {
     public void onCreate() {
         super.onCreate();
         mTrackCollection = TripTrackCollection.getInstance(this);
-        startFrontService();
+        //法1：Notificationt提升优先级，用户有感知
+        //startFrontService();
+
+        //法2：Notificationt提升优先级，用户无感知
+//        Intent intent = new Intent(this, RogueIntentService.class);
+//        startService(intent);
+//        startForeground(ROGUE_ID, new Notification());
+
+        //法3：栈顶的Activity来保活
+//        mReceiver = new ScreenReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.intent.action.SCREEN_OFF");
+//        intentFilter.addAction("android.intent.action.SCREEN_ON");
+//        intentFilter.addAction("android.intent.action.USER_PRESENT");
+//        registerReceiver(mReceiver, intentFilter);
+
+
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mTrackCollection.destory();
-        stopForeground(true);
+        //stopForeground(true);
+        if(mReceiver != null){
+            unregisterReceiver(mReceiver);
+        }
     }
 
     class DataBinder extends Binder implements ITripTrackCollection {
@@ -102,4 +125,33 @@ public class TrackCollectService extends Service {
             startForeground(100, notification);// 开启前台服务
         }
     }
+
+
+    public static class RogueIntentService extends IntentService {
+
+        //流氓相互唤醒Service
+        public RogueIntentService(String name) {
+            super(name);
+        }
+
+        public RogueIntentService() {
+            super("RogueIntentService");
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+
+        }
+        @Override
+        public void onCreate() {
+            super.onCreate();
+            startForeground(ROGUE_ID, new Notification());
+        }
+        @Override
+        public void onDestroy() {
+            stopForeground(true);
+            super.onDestroy();
+        }
+    }
+
 }

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +21,10 @@ import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.PolylineOptions;
-import com.geduo.datacollect.util.SyncControl;
+import com.geduo.datacollect.alive.notifiy.DaemonService;
+import com.geduo.datacollect.alive.music.PlayerMusicService;
+import com.geduo.datacollect.alive.onepx.ScreenManager;
+import com.geduo.datacollect.alive.onepx.ScreenReceiverUtil;
 import com.geduo.datacollect.util.SyncSharedPreference;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.geduo.datacollect.contract.ITripTrackCollection;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
 	Button btnShow;
 	ITripTrackCollection mTrackCollection;
 	private AMap mMap;
+	private ScreenReceiverUtil mScreenListener;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,28 @@ public class MainActivity extends AppCompatActivity {
 		});
 		//锁屏之后，过补了半个小时同步服务就挂了,不靠谱
 		//SyncControl.createSyncAccount(MainActivity.this);
+		//startService(new Intent(MainActivity.this, PairServiceA.class));
+		//startService (new Intent (this, MainService.class));
+		//startService (new Intent (this, RemoteService.class));
+		mScreenListener = new ScreenReceiverUtil(this);
+		mScreenListener.setScreenReceiverListener( new ScreenReceiverUtil.SreenStateListener() {
+			@Override
+			public void onSreenOn() {
+				ScreenManager.getScreenManagerInstance(MainActivity.this).finishActivity();
+			}
+
+
+			@Override
+			public void onSreenOff() {
+				ScreenManager.getScreenManagerInstance(MainActivity.this).startActivity();
+			}
+
+
+			@Override
+			public void onUserPresent() {
+				// 解锁，暂不用，保留
+			}
+		});
 
 	}
 
@@ -180,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
 		if (mTrackCollection != null) {
 			mTrackCollection.start();
 		}
-
+		startDaemonService();
+		//startPlayMusicService();
 	}
 
 	@OnClick(R.id.btn_stop)
@@ -189,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
 			mTrackCollection.stop();
 			SyncSharedPreference.getInstance(MainActivity.this).addCollectEndTime("end_time_stop");
 		}
+		stopDaemonService();
+		//stopPlayMusicService();
 	}
 
 	@OnClick(R.id.btn_show)
@@ -196,6 +225,24 @@ public class MainActivity extends AppCompatActivity {
 		String trackid = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		List<LatLng> track = TripDBHelper.getInstance(this).getTrack(trackid);
 		showTrack(track);
+	}
+	private void startDaemonService() {
+		Intent intent = new Intent(this, DaemonService.class);
+		startService(intent);
+	}
+
+	private void stopDaemonService() {
+		Intent intent = new Intent(this, DaemonService.class);
+		stopService(intent);
+	}
+	private void stopPlayMusicService() {
+		Intent intent = new Intent(this, PlayerMusicService.class);
+		stopService(intent);
+	}
+
+	private void startPlayMusicService() {
+		Intent intent = new Intent(this,PlayerMusicService.class);
+		startService(intent);
 	}
 
 }

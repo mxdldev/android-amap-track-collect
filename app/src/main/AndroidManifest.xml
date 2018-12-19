@@ -46,18 +46,31 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".onepx.OnePxActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:finishOnTaskLaunch="false"
+            android:launchMode="singleInstance"
+            android:process=":main"
+            android:theme="@android:style/Theme.Translucent"
+            />
 
         <service android:name="com.amap.api.location.APSService"/>
         <service android:name=".service.TrackCollectService"/>
 
         <provider
-            android:name=".provider.SyncContentProvider"
+            android:name=".alive.sync.provider.SyncContentProvider"
             android:authorities="@string/account_auth_provider"
             android:exported="false"
             android:syncable="true"/>
 
         <service
-            android:name=".service.SyncAdapterService"
+            android:name=".alive.sync.service.SyncAdapterService"
             android:exported="true"
             android:process=":core">
             <intent-filter>
@@ -69,7 +82,7 @@
                 android:resource="@xml/syncadapter"/>
             />
         </service>
-        <service android:name=".service.SyncAccountService">
+        <service android:name=".alive.sync.service.SyncAccountService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -78,8 +91,44 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>
         </service>
+        <service android:name=".alive.doubles.one.PairServiceA"/>
+        <service
+            android:name=".alive.doubles.one.PairServiceB"
+            android:process=":alive"/>
+        <service
+            android:name=".alive.doubles.two.MainService"
+            android:enabled="true"
+            android:exported="true"
+            />
+        <service
+            android:name=".alive.doubles.two.RemoteService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote"
+            />
+        <service android:name=".alive.notifiy.DaemonService"
+                 android:enabled="true"
+                 android:exported="true"
+                 android:process=":daemon_service"/>
 
-        <activity android:name=".MainActivity" android:launchMode="singleTask"/>
+
+        <service android:name=".alive.notifiy.CancelService"
+                 android:enabled="true"
+                 android:exported="true"
+                 android:process=":service"/>
+
+        <service android:name=".alive.music.PlayerMusicService"
+                 android:enabled="true"
+                 android:exported="true"
+                 android:process=":music_service"/>
+
+        <activity android:name=".alive.onepx.SinglePixelActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+                  android:excludeFromRecents="true"
+                  android:finishOnTaskLaunch="false"
+                  android:launchMode="singleInstance"
+                  android:theme="@style/SingleActivityStyle"/>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b329d32441792efc75636bc43bad8b71"/>
