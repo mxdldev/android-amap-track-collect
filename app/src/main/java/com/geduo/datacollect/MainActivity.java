@@ -21,6 +21,7 @@ import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.PolylineOptions;
+import com.geduo.datacollect.alive.job.JobSchedulerManager;
 import com.geduo.datacollect.alive.notifiy.DaemonService;
 import com.geduo.datacollect.alive.music.PlayerMusicService;
 import com.geduo.datacollect.alive.onepx.ScreenManager;
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
 				// 解锁，暂不用，保留
 			}
 		});
-
+		JobSchedulerManager mJobManager = JobSchedulerManager.getJobSchedulerInstance(this);
+		mJobManager.startJobScheduler();
 	}
 
 	// 启动轨迹信息收集服务

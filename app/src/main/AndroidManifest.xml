@@ -31,6 +31,8 @@
     <!-- Required because we're manually creating a new account. -->
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -128,7 +130,9 @@
                   android:finishOnTaskLaunch="false"
                   android:launchMode="singleInstance"
                   android:theme="@style/SingleActivityStyle"/>
-
+        <service
+            android:name=".alive.job.AliveJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b329d32441792efc75636bc43bad8b71"/>
