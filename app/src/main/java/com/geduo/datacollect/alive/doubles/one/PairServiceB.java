@@ -9,14 +9,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 /**
- * Description: <><br>
+ * Description: <PairServiceB><br>
  * Author:      gxl<br>
  * Date:        2018/12/18<br>
  * Version:     V1.0.0<br>
  * Update:     <br>
  */
 public class PairServiceB extends Service {
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

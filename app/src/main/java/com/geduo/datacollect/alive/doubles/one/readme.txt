@@ -1,5 +1,6 @@
 1.用法
 startService(new Intent(MainActivity.this, PairServiceA.class));
+startService(new Intent(MainActivity.this, PairServiceB.class));
 
 2.注册
 <service android:name=".alive.doubles.one.PairServiceA"/>
