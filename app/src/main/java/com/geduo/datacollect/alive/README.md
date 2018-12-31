@@ -569,7 +569,7 @@ public class JobSchedulerManager {
 }
 ```
 
-## 6.流氓手段通过无线循环播放一个无声音乐来保活
+## 6.流氓手段通过无限循环播放一个无声音乐来保活
 * 6.1 创建服务PlayerMusicService
 ```
 public class PlayerMusicService extends Service {
