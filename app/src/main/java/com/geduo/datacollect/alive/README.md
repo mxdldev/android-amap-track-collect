@@ -1,7 +1,7 @@
 版权声明：本文出自门心叼龙的博客，转载请注明出处。https://blog.csdn.net/geduo_83/article/details/85483898
-<br>github源码下载地址：https://github.com/geduo83/TrackDataCollect/blob/sync/app/src/main/java/com/geduo/datacollect/alive/
-
-在上一篇文章[Android车辆运行轨迹大数据采集最佳实践](https://blog.csdn.net/geduo_83/article/details/84943984)这篇文章中我们讲到，数据采集服务是一个持久的操作，当采集服务进入后台后，有可能被系统杀死的可能，可用通过账号同步服务SysAdapter来提升进程的优先级来降低采集服务被后台杀死的几率。 本文共介绍了6中后台服务保活方案，下文将逐一介绍：
+<br/>github源码下载地址：https://github.com/geduo83/TrackDataCollect/blob/sync/app/src/main/java/com/geduo/datacollect/alive/
+<br/><br/>今天是2018年的最后一天，幸好元旦放假三天，有时间来整理下这阵子研究的一点儿新东西，把它记录分享出来，本来这篇文章应该是上个周要完成，但是由于工作忙没有时间写，就拖到今天了，再过几个小时就2019年了，愿新的一年我们都能心想事成。
+<br/><br/>在上一篇文章[Android车辆运行轨迹大数据采集最佳实践](https://blog.csdn.net/geduo_83/article/details/84943984)这篇文章中我们讲到，数据采集服务是一个持久的操作，当采集服务进入后台后，有可能被系统杀死的可能，可用通过账号同步服务SysAdapter来提升进程的优先级来降低采集服务被后台杀死的几率。 本文共介绍了6中后台服务保活方案，下文将逐一介绍：
 ## 1.账号同步服务SysAdapter保活
 * 1.1 通过ContentProvider实现数据同步
 ```
@@ -634,7 +634,8 @@ public class PlayerMusicService extends Service {
                  android:process=":music_service"/>
 
 ```
-
+## 探索发现
+以上就几种常见的后台服务保活常用的解决方案，通过测试发现SyncAdapter、JobServic、双Service保活，在app进入后台，亮屏情况下好用，如果手机（三星 S6 edge+）黑屏情况下，顶多半个小时就挂掉了，1像素透明Activity的效果也不是很好使，通过开启前台服务发送一个Notication小米4能存活四五个小时没有一点问题，但是在三星 S6 edge+收效甚微，正是由于Android的碎片化，各家厂商深度定制开发，导致各家厂商后台进程管理策略不尽相同，各种保活方案有有所差异，但是最后发现最简单粗暴的方法是在后台无限循环播放一个无声音乐还是最好使的。
 ## 问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 * QQ：303704981
