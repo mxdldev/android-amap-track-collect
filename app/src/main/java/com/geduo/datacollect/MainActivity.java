@@ -21,6 +21,8 @@ import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.PolylineOptions;
+import com.geduo.datacollect.alive.doubles.two.MainService;
+import com.geduo.datacollect.alive.doubles.two.RemoteService;
 import com.geduo.datacollect.alive.job.JobSchedulerManager;
 import com.geduo.datacollect.alive.notifiy.DaemonService;
 import com.geduo.datacollect.alive.music.PlayerMusicService;
@@ -79,32 +81,35 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
+		startPlayMusicService();
+		//法1：双服务保活
+		//startService (new Intent (this, MainService.class));
+		//startService (new Intent (this, RemoteService.class));
 		//锁屏之后，过补了半个小时同步服务就挂了,不靠谱
 		//SyncControl.createSyncAccount(MainActivity.this);
 		//startService(new Intent(MainActivity.this, PairServiceA.class));
-		//startService (new Intent (this, MainService.class));
-		//startService (new Intent (this, RemoteService.class));
-		mScreenListener = new ScreenReceiverUtil(this);
-		mScreenListener.setScreenReceiverListener( new ScreenReceiverUtil.SreenStateListener() {
-			@Override
-			public void onSreenOn() {
-				ScreenManager.getScreenManagerInstance(MainActivity.this).finishActivity();
-			}
 
-
-			@Override
-			public void onSreenOff() {
-				ScreenManager.getScreenManagerInstance(MainActivity.this).startActivity();
-			}
-
-
-			@Override
-			public void onUserPresent() {
-				// 解锁，暂不用，保留
-			}
-		});
-		JobSchedulerManager mJobManager = JobSchedulerManager.getJobSchedulerInstance(this);
-		mJobManager.startJobScheduler();
+//		mScreenListener = new ScreenReceiverUtil(this);
+//		mScreenListener.setScreenReceiverListener( new ScreenReceiverUtil.SreenStateListener() {
+//			@Override
+//			public void onSreenOn() {
+//				ScreenManager.getScreenManagerInstance(MainActivity.this).finishActivity();
+//			}
+//
+//
+//			@Override
+//			public void onSreenOff() {
+//				ScreenManager.getScreenManagerInstance(MainActivity.this).startActivity();
+//			}
+//
+//
+//			@Override
+//			public void onUserPresent() {
+//				// 解锁，暂不用，保留
+//			}
+//		});
+		//JobSchedulerManager mJobManager = JobSchedulerManager.getJobSchedulerInstance(this);
+		//mJobManager.startJobScheduler();
 	}
 
 	// 启动轨迹信息收集服务
@@ -208,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 		if (mTrackCollection != null) {
 			mTrackCollection.start();
 		}
-		startDaemonService();
+		//startDaemonService();
 		//startPlayMusicService();
 	}
 

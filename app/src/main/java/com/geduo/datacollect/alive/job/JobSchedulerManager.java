@@ -9,7 +9,7 @@ import android.content.Context;
 import android.os.Build;
 
 /**
- * Description: <PlayerMusicService><br>
+ * Description: <JobSchedulerManager><br>
  * Author:      gxl<br>
  * Date:        2018/12/19<br>
  * Version:     V1.0.0<br>
@@ -59,8 +59,7 @@ public class JobSchedulerManager {
         JobInfo info = builder.build();
         mJobScheduler.schedule(info); //开始定时执行该系统任务
 
-
-    }
+   }
 
     @TargetApi(21)
     public void stopJobScheduler(){
