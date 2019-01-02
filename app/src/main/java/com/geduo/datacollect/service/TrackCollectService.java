@@ -46,12 +46,12 @@ public class TrackCollectService extends Service {
 //        startForeground(ROGUE_ID, new Notification());
 
         //法3：栈顶的Activity来保活
-//        mReceiver = new ScreenReceiver();
+//        MyReceiver = new ScreenReceiver();
 //        IntentFilter intentFilter = new IntentFilter();
 //        intentFilter.addAction("android.intent.action.SCREEN_OFF");
 //        intentFilter.addAction("android.intent.action.SCREEN_ON");
 //        intentFilter.addAction("android.intent.action.USER_PRESENT");
-//        registerReceiver(mReceiver, intentFilter);
+//        registerReceiver(MyReceiver, intentFilter);
 
 
 

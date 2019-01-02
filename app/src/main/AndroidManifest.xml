@@ -139,7 +139,7 @@
         <service
             android:name=".alive.job.AliveJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <receiver android:name=".alive.join.mReceiver">
+        <receiver android:name=".alive.join.MyReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

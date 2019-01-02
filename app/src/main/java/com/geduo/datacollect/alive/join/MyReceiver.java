@@ -13,7 +13,7 @@ import android.content.Intent;
  */
 
 
-public class mReceiver extends BroadcastReceiver {
+public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent){
         Intent mIntent = new Intent(context,StepService.class);
