@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          android:persistent="true"
-          package="com.geduo.datacollect">
+          package="com.geduo.datacollect"
+          android:persistent="true">
 
     <!-- 用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -33,6 +33,7 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name=".MyApplication"
@@ -109,31 +110,95 @@
             android:exported="true"
             android:process=":remote"
             />
-        <service android:name=".alive.notifiy.DaemonService"
-                 android:enabled="true"
-                 android:exported="true"
-                 android:process=":daemon_service"/>
+        <service
+            android:name=".alive.notifiy.DaemonService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":daemon_service"/>
 
 
-        <service android:name=".alive.notifiy.CancelService"
-                 android:enabled="true"
-                 android:exported="true"
-                 android:process=":service"/>
+        <service
+            android:name=".alive.notifiy.CancelService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":service"/>
 
-        <service android:name=".alive.music.PlayerMusicService"
-                 android:enabled="true"
-                 android:exported="true"
-                 android:process=":music_service"/>
+        <service
+            android:name=".alive.music.PlayerMusicService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":music_service"/>
 
-        <activity android:name=".alive.onepx.SinglePixelActivity"
-                  android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
-                  android:excludeFromRecents="true"
-                  android:finishOnTaskLaunch="false"
-                  android:launchMode="singleInstance"
-                  android:theme="@style/SingleActivityStyle"/>
+        <activity
+            android:name=".alive.onepx.SinglePixelActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="false"
+            android:launchMode="singleInstance"
+            android:theme="@style/SingleActivityStyle"/>
         <service
             android:name=".alive.job.AliveJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <receiver android:name=".alive.join.mReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".alive.join.StepService"
+            android:process="istep.service">
+                       
+            <intent-filter android:priority="1000">
+                                <!-- 系统启动完成后会调用-->
+                               
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                               
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                               
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                               
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                               
+                <action android:name="android.intent.action.ACTION_TIME_TICK"/>
+                               
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                               
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                           
+            </intent-filter>
+        </service>
+
+
+        <service
+            android:name=".alive.join.GuardService"
+            android:process=":GuardService">
+                       
+            <intent-filter>
+                                <!-- 系统启动完成后会调用-->
+                               
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                               
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                               
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                               
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                               
+                <action android:name="android.intent.action.ACTION_TIME_TICK"/>
+                               
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                               
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                           
+            </intent-filter>
+                   
+        </service>
+
+        <service
+            android:name=".alive.join.JobWakeUpService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b329d32441792efc75636bc43bad8b71"/>

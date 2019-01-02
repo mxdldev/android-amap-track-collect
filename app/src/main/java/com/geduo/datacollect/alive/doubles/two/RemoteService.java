@@ -66,6 +66,8 @@ public class RemoteService extends Service {
 
     @Override
     public void onDestroy() {
+        startService(new Intent(RemoteService.this, MainService.class));
+        bindService(new Intent(RemoteService.this, MainService.class), conn, Context.BIND_IMPORTANT);
         Log.v("MYTAG", "remote onDestroy start...");
     }
 }

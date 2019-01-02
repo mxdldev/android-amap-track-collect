@@ -5,8 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,9 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.geduo.datacollect.alive.doubles.two.MainService;
 import com.geduo.datacollect.alive.doubles.two.RemoteService;
 import com.geduo.datacollect.alive.job.JobSchedulerManager;
+import com.geduo.datacollect.alive.join.GuardService;
+import com.geduo.datacollect.alive.join.JobWakeUpService;
+import com.geduo.datacollect.alive.join.StepService;
 import com.geduo.datacollect.alive.notifiy.DaemonService;
 import com.geduo.datacollect.alive.music.PlayerMusicService;
 import com.geduo.datacollect.alive.onepx.ScreenManager;
@@ -35,6 +40,7 @@ import com.geduo.datacollect.database.TripDBHelper;
 import com.geduo.datacollect.service.TrackCollectService;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -71,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
 		mMap = mMapView.getMap();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
 		startTrackCollectService();
-		new RxPermissions(this).request(Manifest.permission.ACCESS_COARSE_LOCATION,
-				Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Consumer<Boolean>() {
+		new RxPermissions(this).request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Consumer<Boolean>() {
 			@Override
 			public void accept(Boolean aBoolean) throws Exception {
 				if (!aBoolean) {
@@ -81,35 +85,12 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
-		startPlayMusicService();
+		//startPlayMusicService();
+		//startAllServices();
 		//法1：双服务保活
 		//startService (new Intent (this, MainService.class));
 		//startService (new Intent (this, RemoteService.class));
-		//锁屏之后，过补了半个小时同步服务就挂了,不靠谱
-		//SyncControl.createSyncAccount(MainActivity.this);
-		//startService(new Intent(MainActivity.this, PairServiceA.class));
-
-//		mScreenListener = new ScreenReceiverUtil(this);
-//		mScreenListener.setScreenReceiverListener( new ScreenReceiverUtil.SreenStateListener() {
-//			@Override
-//			public void onSreenOn() {
-//				ScreenManager.getScreenManagerInstance(MainActivity.this).finishActivity();
-//			}
-//
-//
-//			@Override
-//			public void onSreenOff() {
-//				ScreenManager.getScreenManagerInstance(MainActivity.this).startActivity();
-//			}
-//
-//
-//			@Override
-//			public void onUserPresent() {
-//				// 解锁，暂不用，保留
-//			}
-//		});
-		//JobSchedulerManager mJobManager = JobSchedulerManager.getJobSchedulerInstance(this);
-		//mJobManager.startJobScheduler();
+		startAllServices();
 	}
 
 	// 启动轨迹信息收集服务
@@ -136,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onDestroy();
 		// 在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
 		mMapView.onDestroy();
-
 	}
 
 	@Override
@@ -176,8 +156,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		final LatLngBounds.Builder mBuilder = new LatLngBounds.Builder();
-		PolylineOptions polylineOptions = new PolylineOptions().setCustomTexture(
-				BitmapDescriptorFactory.fromResource(R.mipmap.ic_tour_track)).addAll(list);
+		PolylineOptions polylineOptions = new PolylineOptions().setCustomTexture(BitmapDescriptorFactory.fromResource(R.mipmap.ic_tour_track)).addAll(list);
 		if (mMap != null) {
 			mMap.clear();
 			mMap.addPolyline(polylineOptions);
@@ -194,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 				if (mBuilder != null && mMap != null) {
 					LatLng northeast = mBuilder.build().northeast;
 					if (northeast != null && northeast.equals(mBuilder.build().southwest)) {
-						cameraUpdate = CameraUpdateFactory.newLatLngZoom(mBuilder.build().southwest,17);
+						cameraUpdate = CameraUpdateFactory.newLatLngZoom(mBuilder.build().southwest, 17);
 					} else {
 						cameraUpdate = CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 20);
 					}
@@ -213,8 +192,6 @@ public class MainActivity extends AppCompatActivity {
 		if (mTrackCollection != null) {
 			mTrackCollection.start();
 		}
-		//startDaemonService();
-		//startPlayMusicService();
 	}
 
 	@OnClick(R.id.btn_stop)
@@ -223,8 +200,6 @@ public class MainActivity extends AppCompatActivity {
 			mTrackCollection.stop();
 			SyncSharedPreference.getInstance(MainActivity.this).addCollectEndTime("end_time_stop");
 		}
-		stopDaemonService();
-		//stopPlayMusicService();
 	}
 
 	@OnClick(R.id.btn_show)
@@ -233,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 		List<LatLng> track = TripDBHelper.getInstance(this).getTrack(trackid);
 		showTrack(track);
 	}
+
 	private void startDaemonService() {
 		Intent intent = new Intent(this, DaemonService.class);
 		startService(intent);
@@ -242,14 +218,27 @@ public class MainActivity extends AppCompatActivity {
 		Intent intent = new Intent(this, DaemonService.class);
 		stopService(intent);
 	}
+
 	private void stopPlayMusicService() {
 		Intent intent = new Intent(this, PlayerMusicService.class);
 		stopService(intent);
 	}
 
 	private void startPlayMusicService() {
-		Intent intent = new Intent(this,PlayerMusicService.class);
+		Intent intent = new Intent(this, PlayerMusicService.class);
 		startService(intent);
+	}
+
+	/**
+	 * 开启所有Service
+	 */
+	private void startAllServices() {
+		startService(new Intent(this, StepService.class));
+		startService(new Intent(this, GuardService.class));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Log.d("MYTAG", "startAllServices: ");
+			startService(new Intent(this, JobWakeUpService.class));
+		}
 	}
 
 }
