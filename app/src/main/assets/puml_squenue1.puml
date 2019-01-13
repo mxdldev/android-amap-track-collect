@@ -1,0 +1,38 @@
+@startuml
+title Android Broadcast procedure
+participant Activity #Lime
+participant ContextWrapper #Cyan
+participant ContextImpl #Cyan
+participant ActivityManagerService #Cyan
+participant ActivityStackSupervisor #Cyan
+participant ActivityStack #Cyan
+participant ApplicationThreadProxy #Silver
+participant InnerReceiver #Magenta
+participant ReceiverDispatcher #Magenta
+participant BroadcastReceiver #Magenta
+
+autonumber
+Activity -> ContextWrapper : registerReceiver()
+ContextWrapper -> ContextImpl : registerReceiver()
+ContextImpl -> LoadedApk : getReceiverDispatcher()
+LoadedApk -> ActivityManagerProxy : registerReceiver()
+ActivityManagerProxy -> ActivityManagerService : registerReceiver()
+
+Activity -> ContextWrapper : sendBroadcast()
+ContextWrapper -> ContextImpl : sendBroadcast()
+ContextImpl -> ActivityManagerService: broadcastIntent()
+ActivityManagerService -> ActivityManagerService : broadcastIntentLocked()
+ActivityManagerService -> ActivityManagerService : collectReceiverComponents()
+ActivityManagerService -> ActivityManagerService : scheduleBroadcastsLocked()
+ActivityManagerService -> ActivityManagerService : processNextBroadcast()
+ActivityManagerService -> ActivityManagerService : deliverToRegisteredReceiverLocked()
+ActivityManagerService -> ActivityManagerService : performReceiveLocked()
+ActivityManagerService -> ApplicationThreadProxy : scheduleRegisteredReceiver()
+ApplicationThreadProxy -> InnerReceiver : performReceive()
+InnerReceiver -> ReceiverDispatcher : performReceive()
+ReceiverDispatcher -> BroadcastReceiver : onReceive()
+
+Activity -> ContextWrapper : sendOrderedBroadcast()
+ContextWrapper -> ContextImpl : sendOrderedBroadcast()
+ContextImpl -> ActivityManagerService: broadcastIntent()
+@enduml
